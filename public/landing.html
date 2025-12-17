@@ -122,15 +122,21 @@
         radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,0) 35%),
         radial-gradient(circle at 50% 50%, #ffd36a 0%, #f7b500 45%, #c98a00 75%, #8a5a00 100%);
       box-shadow: 0 0 10px rgba(255,200,60,.35);
-      filter: saturate(1.1);
 
+      /* ✅ profundidad (se setea por JS): blur + opacity */
+      filter: blur(var(--blur, 0px)) saturate(1.1);
+
+      /* ✅ más lento + lluvia real */
       animation: coinFall linear infinite, coinSpin linear infinite;
+      will-change: transform;
     }
 
+    /* ✅ lluvia: cae de arriba a abajo recorriendo toda la tarjeta */
     @keyframes coinFall{
-      from { transform: translateY(-20px); }
-      to   { transform: translateY(520px); }
+      from { transform: translateY(-60px); }
+      to   { transform: translateY(140%); }  /* 140% = pasa el fondo de la card */
     }
+
     @keyframes coinSpin{
       from { rotate: 0deg; }
       to   { rotate: 360deg; }
@@ -183,7 +189,7 @@
       box-shadow:0 0 8px rgba(34,197,94,1);
     }
 
-    /* ✅ LOGO SIN RESPLANDOR (para evitar “cuadrado” por CSS) */
+    /* ✅ LOGO SIN RESPLANDOR */
     .slot-img{
       max-width:290px;
       width:78vw;
@@ -306,7 +312,7 @@
 
         <button class="cta-btn" id="cta-btn">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 24 24">
-            <path d="M19.05 4.91A9.8 9.8 0 0 0 12.04 2C6.51 2 2 6.51 2 12.04c0 1.93.53 3.81 1.52 5.46L2 22l4.62-1.51a10 10 0 0 0 5.42 1.55h.02c5.53 0 10.04-4.51 10.04-10.04 0-2.67-1.04-5.18-2.95-7.09ZM12.06 20c-1.71 0-3.38-.46-4.84-1.33l-.35-.2-2.74.9.9-2.67-.22-.35a8.05 8.05 0 1 1 7.25 4.65Zm4.52-5.99c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.57.14-.17.25-.65.8-.8.96-.15.17-.3.18-.55.06-.25-.13-1.06-.39-2.03-1.24-.75-.67-1.25-1.49-1.4-1.73-.15-.25-.02-.38.11-.5.12-.12.25-.3.38-.45.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.48-.4-.42-.57-.43l-.48-.01c-.17 0-.45.06-.69.32-.23.25-.9.88-.9 2.14 0 1.26.93 2.48 1.06 2.65.13.17 1.81 2.77 4.47 3.89 2.66 1.12 2.66.75 3.14.7.48-.04 1.47-.6 1.68-1.18.21-.57.21-1.06.15-1.18-.06-.13-.23-.2-.48-.33Z"/>
+            <path d="M19.05 4.91A9.8 9.8 0 0 0 12.04 2C6.51 2 2 6.51 2 12.04c0 1.93.53 3.81 1.52 5.46L2 22l4.62-1.51a10 10 0 0 0 5.42 1.55h.02c5.53 0 10.04-4.51 10.04-10.04 0-2.67-1.04-5.18-2.95-7.09ZM12.06 20c-1.71 0-3.38-.46-4.84-1.33l-.35 -.2-2.74.9.9-2.67-.22-.35a8.05 8.05 0 1 1 7.25 4.65Zm4.52-5.99c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.57.14-.17.25-.65.8-.8.96-.15.17-.3.18-.55.06-.25-.13-1.06-.39-2.03-1.24-.75-.67-1.25-1.49-1.4-1.73-.15-.25-.02-.38.11-.5.12-.12.25-.3.38-.45.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.48-.4-.42-.57-.43l-.48-.01c-.17 0-.45.06-.69.32-.23.25-.9.88-.9 2.14 0 1.26.93 2.48 1.06 2.65.13.17 1.81 2.77 4.47 3.89 2.66 1.12 2.66.75 3.14.7.48-.04 1.47-.6 1.68-1.18.21-.57.21-1.06.15-1.18-.06-.13-.23-.2-.48-.33Z"/>
           </svg>
           CREAR USUARIO
         </button>
@@ -336,9 +342,9 @@
       document.body.appendChild(p);
     }
 
-    // 🪙 Monedas dentro de la card
+    // 🪙 Monedas dentro de la card (más lento + profundidad)
     const coinsLayer = document.querySelector(".coins-layer");
-    const coinsCount = 18;
+    const coinsCount = 26; // más lluvia
 
     function rand(min, max){ return Math.random() * (max - min) + min; }
 
@@ -348,14 +354,25 @@
         c.className = "coin";
 
         const left = rand(0, 100);
-        const size = rand(12, 22);
-        const fallDur = rand(4.5, 8.5);
-        const spinDur = rand(1.2, 2.4);
-        const delay = rand(0, 3.5);
+        const size = rand(10, 26);
+
+        // ✅ más lento
+        const fallDur = rand(8.5, 14.5);
+        const spinDur = rand(1.8, 3.2);
+
+        // ✅ continuidad: delay negativo (arrancan “ya cayendo”)
+        const delay = -rand(0, fallDur);
+
+        // ✅ profundidad: blur + opacidad
+        const blur = (size < 14) ? rand(0.8, 2.0) : rand(0, 0.7);
+        const op   = (size < 14) ? rand(0.25, 0.55) : rand(0.55, 0.9);
 
         c.style.left = left + "%";
         c.style.width = size + "px";
         c.style.height = size + "px";
+        c.style.opacity = op.toFixed(2);
+        c.style.setProperty("--blur", blur.toFixed(2) + "px");
+
         c.style.animationDuration = `${fallDur}s, ${spinDur}s`;
         c.style.animationDelay = `${delay}s, ${delay}s`;
 
@@ -369,13 +386,11 @@
       if (redirected) return;
       redirected = true;
 
-      // Eventos de conversión para Meta cuando el usuario toca el botón
       if (window.fbq) {
-        fbq('track', 'Contact');        // Evento oficial de WhatsApp
-        fbq('trackCustom', 'WAclick');  // Clic real al botón de WA
+        fbq('track', 'Contact');
+        fbq('trackCustom', 'WAclick');
       }
 
-      // Redirección al router / round robin
       setTimeout(() => {
         window.location.href = "/api/r";
       }, 300);
