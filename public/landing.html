@@ -8,432 +8,154 @@
   <!-- 💎 FUENTE -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- 💰 META PIXEL (PIXEL DEL CLIENTE) -->
+  <!-- 💰 META PIXEL -->
   <script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
-
-    // ID del pixel del cliente
     fbq('init', '1410739130764593');
     fbq('track', 'PageView');
   </script>
 
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1410739130764593&ev=PageView&noscript=1"/>
-  </noscript>
-
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
+    *{margin:0;padding:0;box-sizing:border-box}
 
     body{
       height:100vh;
-      background:radial-gradient(circle at 20% 20%, #2a004d, #000000 90%);
-      overflow:hidden;
+      background:radial-gradient(circle at 20% 20%, #2a004d, #000 90%);
       display:flex;
       justify-content:center;
       align-items:center;
-      flex-direction:column;
-      color:white;
-      font-family:"Montserrat", sans-serif;
-      text-align:center;
-      position:relative;
-      animation:bgMove 10s ease-in-out infinite alternate;
-    }
-
-    @keyframes bgMove{
-      0%{ background-position:0 0; background-color:#2a004d }
-      100%{ background-position:100% 100%; background-color:#4b0099 }
-    }
-
-    .particle{
-      position:absolute;
-      background:rgba(177,124,255,.5);
-      border-radius:50%;
-      width:2px; height:2px;
-      animation:float linear infinite, shimmer 4s ease-in-out infinite;
-      box-shadow:0 0 6px rgba(177,124,255,.8);
-    }
-
-    @keyframes float{ from{transform:translateX(0);opacity:.25} to{transform:translateX(100vw);opacity:.9} }
-    @keyframes shimmer{ 0%,100%{opacity:.2} 50%{opacity:.9} }
-
-    .card-wrapper{
-      z-index:2;
-      padding:20px;
-      width:100%;
-      display:flex;
-      justify-content:center;
+      font-family:Montserrat,sans-serif;
+      color:#fff;
+      overflow:hidden;
     }
 
     .card{
       position:relative;
-      max-width:380px;
-      width:100%;
-      padding:22px 20px 20px;
+      width:380px;
+      padding:22px;
       border-radius:20px;
-      background:rgba(9, 9, 22, 0.82);
-      box-shadow:0 0 32px rgba(0,0,0,.7);
+      background:rgba(9,9,22,.82);
       backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
-      overflow:hidden;
+      box-shadow:0 0 32px rgba(0,0,0,.7);
     }
 
-    /* borde/contorno */
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:20px;
-      padding:1px;
-      background:linear-gradient(135deg, rgba(177,124,255,.9), rgba(56,189,248,.7));
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor;
-      mask-composite:exclude;
-      opacity:.7;
-      z-index:1;
-      pointer-events:none;
+    .card-inner{position:relative;z-index:2;text-align:center}
+
+    /* 🔥 LOGO + MONEDAS */
+    .logo-wrap{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin:10px 0 25px;
     }
 
-    /* 🪙 Capa de monedas adentro de la tarjeta */
     .coins-layer{
       position:absolute;
-      inset:0;
+      inset:-25%;
       overflow:hidden;
-      border-radius:20px;
       z-index:0;
       pointer-events:none;
     }
 
-    /* ✅ MONEDA MÁS REAL (3D + borde + brillo) */
     .coin{
       position:absolute;
       top:-40px;
-      width:18px;
-      height:18px;
       border-radius:50%;
-      opacity:.85;
-
-      /* profundidad configurable por JS */
-      filter: blur(var(--blur, 0px)) saturate(1.12);
-      will-change: transform;
-
-      /* cuerpo de la moneda */
       background:
-        /* brillo puntual */
-        radial-gradient(circle at 30% 28%, rgba(255,255,255,.95), rgba(255,255,255,0) 38%),
-        /* cara */
-        radial-gradient(circle at 50% 55%, #ffe6a0 0%, #f6c24a 40%, #c98a00 72%, #7a4b00 100%),
-        /* borde / rim */
-        conic-gradient(from 0deg,
-          #7a4b00 0deg 20deg,
-          #ffdc7a 20deg 60deg,
-          #b67600 60deg 110deg,
-          #ffdc7a 110deg 160deg,
-          #9c6500 160deg 220deg,
-          #ffdc7a 220deg 280deg,
-          #b67600 280deg 330deg,
-          #ffdc7a 330deg 360deg
-        );
-
-      box-shadow:
-        0 0 10px rgba(255,200,60,.22),
-        0 10px 18px rgba(0,0,0,.22);
-
-      /* ✅ lluvia (cae de arriba hacia abajo) + giro */
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), transparent 35%),
+        radial-gradient(circle at 50% 50%, #ffd36a 0%, #f7b500 45%, #c98a00 75%, #8a5a00 100%);
+      box-shadow:0 0 12px rgba(255,200,80,.35);
       animation: coinFall linear infinite, coinSpin linear infinite;
     }
 
-    /* anillo interno (más real) */
-    .coin::after{
-      content:"";
-      position:absolute;
-      inset:14%;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow: inset 0 0 10px rgba(0,0,0,.22);
-      opacity:.9;
-    }
-
-    /* ✅ LLUVIA REAL: de arriba hacia abajo recorriendo TODA la tarjeta */
     @keyframes coinFall{
-      from { transform: translate3d(var(--drift, 0px), -60px, 0); }
-      to   { transform: translate3d(var(--drift, 0px), 140%, 0); } /* pasa el fondo completo */
+      from{transform:translateY(-40px)}
+      to{transform:translateY(260px)}
     }
 
+    /* 🔄 GIRO HORARIO */
     @keyframes coinSpin{
-      from { rotate: 0deg; }
-      to   { rotate: 360deg; }
+      from{rotate:0deg}
+      to{rotate:360deg}
     }
 
-    @media (prefers-reduced-motion: reduce){
-      .coin{ animation:none; }
-    }
-
-    .card-inner{
+    .slot-img{
+      width:240px;
       position:relative;
       z-index:2;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
-
-    .badge-row{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:10px;
-    }
-
-    .brand{
-      font-size:0.72rem;
-      letter-spacing:0.22em;
-      text-transform:uppercase;
-      opacity:.75;
-    }
-
-    .pill{
-      font-size:0.7rem;
-      padding:4px 10px;
-      border-radius:999px;
-      background:rgba(34,197,94,.12);
-      border:1px solid rgba(34,197,94,.45);
-      color:#bbf7d0;
-      display:flex;
-      align-items:center;
-      gap:6px;
-      white-space:nowrap;
-    }
-
-    .pill-dot{
-      width:7px; height:7px;
-      border-radius:50%;
-      background:#22c55e;
-      box-shadow:0 0 8px rgba(34,197,94,1);
-    }
-
-    /* ✅ LOGO SIN RESPLANDOR */
-    .slot-img{
-      max-width:290px;
-      width:78vw;
-      margin:4px 0 22px;
-      filter:none;
-      display:block;
       border-radius:28px;
     }
 
     h1{
-      font-size:1.46rem !important;
-      font-weight:700;
-      margin-bottom:6px;
+      font-size:1.45rem;
+      margin-bottom:8px;
       text-shadow:0 0 10px rgba(177,124,255,.9);
-      line-height:1.2;
-    }
-
-    .h1-line-small{
-      display:block;
-      font-size:0.95rem;
-      font-weight:600;
-      opacity:.96;
-      margin-top:20px;
     }
 
     .subtitle{
-      font-size:0.78rem;
-      opacity:.96;
-      margin-bottom:60px;
-      font-weight:500;
-      white-space:nowrap;
-      transform: translateY(-2px);
+      font-size:.8rem;
+      margin-bottom:40px;
+      opacity:.9;
     }
 
     .cta-btn{
-      border:none;
-      cursor:pointer;
       padding:15px 26px;
       border-radius:50px;
-      font-size:0.95rem;
-      font-weight:700;
-      display:flex;
-      gap:10px;
-      align-items:center;
+      border:none;
       background:linear-gradient(135deg,#3aff97,#17c45b);
-      color:#ffffff !important;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
       box-shadow:0 0 22px rgba(34,197,94,.9);
-      animation:pulse 1.4s infinite ease-in-out;
-      letter-spacing:0.04em;
-    }
-
-    @keyframes pulse{
-      0%{transform:scale(1)}
-      50%{transform:scale(1.05)}
-      100%{transform:scale(1)}
-    }
-
-    .helper{
-      font-size:.78rem;
-      opacity:.72;
-      margin-top:30px;
-    }
-
-    .footnote{
-      font-size:0.72rem;
-      opacity:0.48;
-      text-align:center;
-      width:100%;
-      margin-top:50px;
-      letter-spacing:0.04em;
-      white-space:nowrap;
-    }
-
-    @media (max-width:768px){
-      body{
-        justify-content:flex-start;
-        padding-top:24px;
-      }
-
-      .subtitle{
-        font-size:0.72rem;
-        line-height:1.1;
-        white-space:normal;
-      }
-
-      .slot-img{
-        max-width:250px;
-      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="card-wrapper">
-    <div class="card">
-      <!-- 🪙 Monedas -->
-      <div class="coins-layer" aria-hidden="true"></div>
+  <div class="card">
+    <div class="card-inner">
 
-      <div class="card-inner">
-
-        <div class="badge-row">
-          <span class="brand">CASINO ONLINE</span>
-          <span class="pill">
-            <span class="pill-dot"></span>
-            Acceso oficial
-          </span>
-        </div>
-
-        <img src="/logo-home.png" class="slot-img" alt="Logo principal">
-
-        <h1>
-          DIVERTITE, GIRA Y GANA
-          <span class="h1-line-small">¡ES TU MOMENTO!</span>
-        </h1>
-
-        <p class="subtitle">
-          Hacé clic en el boton y empeza a ganar hoy ⬇️
-        </p>
-
-        <button class="cta-btn" id="cta-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 24 24">
-            <path d="M19.05 4.91A9.8 9.8 0 0 0 12.04 2C6.51 2 2 6.51 2 12.04c0 1.93.53 3.81 1.52 5.46L2 22l4.62-1.51a10 10 0 0 0 5.42 1.55h.02c5.53 0 10.04-4.51 10.04-10.04 0-2.67-1.04-5.18-2.95-7.09ZM12.06 20c-1.71 0-3.38-.46-4.84-1.33l-.35-.2-2.74.9.9-2.67-.22-.35a8.05 8.05 0 1 1 7.25 4.65Zm4.52-5.99c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.57.14-.17.25-.65.8-.8.96-.15.17-.3.18-.55.06-.25-.13-1.06-.39-2.03-1.24-.75-.67-1.25-1.49-1.4-1.73-.15-.25-.02-.38.11-.5.12-.12.25-.3.38-.45.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.48-.4-.42-.57-.43l-.48-.01c-.17 0-.45.06-.69.32-.23.25-.9.88-.90 2.14 0 1.26.93 2.48 1.06 2.65.13.17 1.81 2.77 4.47 3.89 2.66 1.12 2.66.75 3.14.7.48-.04 1.47-.6 1.68-1.18.21-.57.21-1.06.15-1.18-.06-.13-.23-.2-.48-.33Z"/>
-          </svg>
-          CREAR USUARIO
-        </button>
-
-        <p class="helper">
-          ATENCION Y RETIROS SIN LIMITES LAS 24 HS
-        </p>
-
+      <!-- 🪙 MONEDAS SOLO ATRÁS DEL LOGO -->
+      <div class="logo-wrap">
+        <div class="coins-layer"></div>
+        <img src="/logo-home.png" class="slot-img" alt="Logo">
       </div>
+
+      <h1>DIVERTITE, GIRA Y GANA</h1>
+      <p class="subtitle">Hacé clic y empezá a ganar hoy ⬇️</p>
+
+      <button class="cta-btn" id="cta-btn">CREAR USUARIO</button>
+
     </div>
   </div>
 
-  <footer class="footnote">
-    © 2025 – Todos los derechos reservados
-  </footer>
-
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-
-    // 🌌 Partículas de fondo (afuera)
-    for (let i = 0; i < 70; i++){
-      const p = document.createElement("div");
-      p.classList.add("particle");
-      p.style.top = Math.random() * 100 + "vh";
-      p.style.left = Math.random() * 100 + "vw";
-      p.style.animationDuration = (6 + Math.random() * 8) + "s";
-      document.body.appendChild(p);
-    }
-
-    // 🪙 Monedas dentro de la card (LLUVIA + MÁS LENTO + PROFUNDIDAD)
     const coinsLayer = document.querySelector(".coins-layer");
-    const coinsCount = 28;
 
-    function rand(min, max){ return Math.random() * (max - min) + min; }
+    function rand(min,max){return Math.random()*(max-min)+min}
 
-    if (coinsLayer) {
-      for (let i = 0; i < coinsCount; i++){
-        const c = document.createElement("div");
-        c.className = "coin";
+    for(let i=0;i<20;i++){
+      const c=document.createElement("div");
+      c.className="coin";
 
-        const left = rand(-5, 105);
-        const size = rand(10, 28);
+      const size=rand(12,22);
+      c.style.width=size+"px";
+      c.style.height=size+"px";
+      c.style.left=rand(0,100)+"%";
+      c.style.opacity=rand(.35,.85);
+      c.style.filter=`blur(${rand(0,1.6)}px)`;
+      c.style.animationDuration=`${rand(6,10)}s, ${rand(1.5,3)}s`;
+      c.style.animationDelay=`${rand(0,4)}s, ${rand(0,4)}s`;
 
-        // ✅ más lento (lluvia)
-        const fallDur = rand(10.5, 17.5);
-        const spinDur = rand(2.2, 4.2);
-
-        // ✅ lluvia continua: delay negativo (ya están cayendo)
-        const delay = -rand(0, fallDur);
-
-        // ✅ profundidad (blur + opacidad)
-        const blur = (size < 14) ? rand(1.1, 2.4) : rand(0.0, 0.9);
-        const op   = (size < 14) ? rand(0.20, 0.52) : rand(0.55, 0.92);
-
-        // ✅ deriva suave (para que sea lluvia real, no líneas perfectas)
-        const drift = rand(-18, 18);
-
-        c.style.left = left + "%";
-        c.style.width = size + "px";
-        c.style.height = size + "px";
-        c.style.opacity = op.toFixed(2);
-        c.style.setProperty("--blur", blur.toFixed(2) + "px");
-        c.style.setProperty("--drift", drift.toFixed(2) + "px");
-
-        c.style.animationDuration = `${fallDur}s, ${spinDur}s`;
-        c.style.animationDelay = `${delay}s, ${delay}s`;
-
-        coinsLayer.appendChild(c);
-      }
+      coinsLayer.appendChild(c);
     }
-
-    let redirected = false;
-
-    function goToWhatsapp(){
-      if (redirected) return;
-      redirected = true;
-
-      if (window.fbq) {
-        fbq('track', 'Contact');
-        fbq('trackCustom', 'WAclick');
-      }
-
-      setTimeout(() => {
-        window.location.href = "/api/r";
-      }, 300);
-    }
-
-    document.addEventListener("click", e => {
-      if (e.target.closest("#cta-btn")) goToWhatsapp();
-    });
-
-  });
   </script>
+
 </body>
 </html>
