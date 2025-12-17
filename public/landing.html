@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Accediendo…</title>
 
-  <!-- 💎 FUENTE MEJORADA -->
+  <!-- 💎 FUENTE -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- 💰 META PIXEL (PIXEL DEL CLIENTE) -->
@@ -17,15 +17,13 @@
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
     // ID del pixel del cliente
-    fbq('init', '1410739130764593'); 
-
-    // Evento de visita a la landing
+    fbq('init', '1410739130764593');
     fbq('track', 'PageView');
   </script>
 
   <noscript>
     <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=854659140621545&ev=PageView&noscript=1"/>
+      src="https://www.facebook.com/tr?id=1410739130764593&ev=PageView&noscript=1"/>
   </noscript>
 
   <style>
@@ -84,6 +82,7 @@
       overflow:hidden;
     }
 
+    /* borde/contorno */
     .card::before{
       content:"";
       position:absolute;
@@ -97,11 +96,53 @@
       -webkit-mask-composite:xor;
       mask-composite:exclude;
       opacity:.7;
+      z-index:1;
+      pointer-events:none;
+    }
+
+    /* 🪙 Capa de monedas adentro de la tarjeta */
+    .coins-layer{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+      border-radius:20px;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    .coin{
+      position:absolute;
+      top:-30px;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      opacity:.85;
+
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,0) 35%),
+        radial-gradient(circle at 50% 50%, #ffd36a 0%, #f7b500 45%, #c98a00 75%, #8a5a00 100%);
+      box-shadow: 0 0 10px rgba(255,200,60,.35);
+      filter: saturate(1.1);
+
+      animation: coinFall linear infinite, coinSpin linear infinite;
+    }
+
+    @keyframes coinFall{
+      from { transform: translateY(-20px); }
+      to   { transform: translateY(520px); }
+    }
+    @keyframes coinSpin{
+      from { rotate: 0deg; }
+      to   { rotate: 360deg; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .coin{ animation:none; }
     }
 
     .card-inner{
       position:relative;
-      z-index:1;
+      z-index:2;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -142,14 +183,14 @@
       box-shadow:0 0 8px rgba(34,197,94,1);
     }
 
+    /* ✅ LOGO SIN RESPLANDOR (para evitar “cuadrado” por CSS) */
     .slot-img{
       max-width:290px;
       width:78vw;
       margin:4px 0 22px;
-      filter:drop-shadow(0 0 38px rgba(177,124,255,1));
+      filter:none;
+      display:block;
       border-radius:28px;
-      overflow:hidden;
-      transition:all .3s ease;
     }
 
     h1{
@@ -239,6 +280,9 @@
 
   <div class="card-wrapper">
     <div class="card">
+      <!-- 🪙 Monedas -->
+      <div class="coins-layer" aria-hidden="true"></div>
+
       <div class="card-inner">
 
         <div class="badge-row">
@@ -252,7 +296,7 @@
         <img src="/logo-home.png" class="slot-img" alt="Logo principal">
 
         <h1>
-          DIVERTITE, GIRA Y GANA 
+          DIVERTITE, GIRA Y GANA
           <span class="h1-line-small">¡ES TU MOMENTO!</span>
         </h1>
 
@@ -282,7 +326,7 @@
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    // 🌌 Partículas de fondo
+    // 🌌 Partículas de fondo (afuera)
     for (let i = 0; i < 70; i++){
       const p = document.createElement("div");
       p.classList.add("particle");
@@ -290,6 +334,33 @@
       p.style.left = Math.random() * 100 + "vw";
       p.style.animationDuration = (6 + Math.random() * 8) + "s";
       document.body.appendChild(p);
+    }
+
+    // 🪙 Monedas dentro de la card
+    const coinsLayer = document.querySelector(".coins-layer");
+    const coinsCount = 18;
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    if (coinsLayer) {
+      for (let i = 0; i < coinsCount; i++){
+        const c = document.createElement("div");
+        c.className = "coin";
+
+        const left = rand(0, 100);
+        const size = rand(12, 22);
+        const fallDur = rand(4.5, 8.5);
+        const spinDur = rand(1.2, 2.4);
+        const delay = rand(0, 3.5);
+
+        c.style.left = left + "%";
+        c.style.width = size + "px";
+        c.style.height = size + "px";
+        c.style.animationDuration = `${fallDur}s, ${spinDur}s`;
+        c.style.animationDelay = `${delay}s, ${delay}s`;
+
+        coinsLayer.appendChild(c);
+      }
     }
 
     let redirected = false;
@@ -310,7 +381,6 @@
       }, 300);
     }
 
-    // Click en el botón
     document.addEventListener("click", e => {
       if (e.target.closest("#cta-btn")) goToWhatsapp();
     });
