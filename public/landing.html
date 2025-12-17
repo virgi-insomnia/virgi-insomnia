@@ -58,8 +58,14 @@
       box-shadow:0 0 6px rgba(177,124,255,.8);
     }
 
-    @keyframes float{ from{transform:translateX(0);opacity:.25} to{transform:translateX(100vw);opacity:.9} }
-    @keyframes shimmer{ 0%,100%{opacity:.2} 50%{opacity:.9} }
+    @keyframes float{
+      from{transform:translateX(0);opacity:.25}
+      to{transform:translateX(100vw);opacity:.9}
+    }
+    @keyframes shimmer{
+      0%,100%{opacity:.2}
+      50%{opacity:.9}
+    }
 
     .card-wrapper{
       z-index:2;
@@ -79,7 +85,7 @@
       box-shadow:0 0 32px rgba(0,0,0,.7);
       backdrop-filter:blur(16px);
       -webkit-backdrop-filter:blur(16px);
-      overflow:hidden; /* clave: la lluvia queda adentro */
+      overflow:hidden; /* clave para lluvia adentro */
     }
 
     /* borde/contorno */
@@ -96,87 +102,79 @@
       -webkit-mask-composite:xor;
       mask-composite:exclude;
       opacity:.7;
-      z-index:1;
+      z-index:2;
       pointer-events:none;
     }
 
-    /* ====== COINS PREMIUM JACKPOT (adentro de la card) ====== */
+    /* ====== COINS JACKPOT (COMPATIBLE) ====== */
     .coins-layer{
       position:absolute;
       inset:0;
       border-radius:inherit;
       pointer-events:none;
-      z-index:0; /* atrás */
+      z-index:0; /* atrás del contenido */
+      overflow:hidden;
     }
 
+    /* contenedor: cae + deriva */
     .coin{
       position:absolute;
-      top:-20%;
+      top:-25%;
+      left:var(--x);
       width:var(--size);
       height:var(--size);
-      border-radius:50%;
       opacity:var(--alpha);
       filter: blur(var(--blur));
-      transform: translate3d(var(--x), -10%, 0) rotate(0deg);
-      animation:
-        coinFall var(--dur) linear var(--delay) infinite,
-        coinDrift calc(var(--dur) * 0.9) ease-in-out var(--delay) infinite alternate,
-        coinSpin  calc(var(--dur) * 0.55) linear var(--delay) infinite;
       will-change: transform;
-      mix-blend-mode: screen;
+      animation: coinFall var(--dur) linear var(--delay) infinite;
     }
 
-    .coin::before{
-      content:"";
-      position:absolute;
-      inset:0;
+    /* cara de moneda: gira */
+    .coin .coin-face{
+      width:100%;
+      height:100%;
       border-radius:50%;
       background:
         radial-gradient(circle at 30% 28%, rgba(255,255,255,.95), rgba(255,255,255,0) 35%),
         radial-gradient(circle at 70% 75%, rgba(255,255,255,.25), rgba(255,255,255,0) 45%),
-        conic-gradient(from 210deg,
-          #fff2b8,
-          #ffd36a,
-          #caa23f,
-          #ffd36a,
-          #fff2b8);
+        conic-gradient(from 210deg,#fff2b8,#ffd36a,#caa23f,#ffd36a,#fff2b8);
       box-shadow:
-        0 0 18px rgba(255,210,90,.25),
-        inset 0 0 18px rgba(255,255,255,.28),
-        inset -10px -14px 22px rgba(130,80,10,.22);
+        0 0 18px rgba(255,210,90,.22),
+        inset 0 0 18px rgba(255,255,255,.25),
+        inset -10px -14px 22px rgba(130,80,10,.18);
+      animation: coinSpin var(--spin) linear var(--delay) infinite;
+      position:relative;
+      mix-blend-mode: screen; /* look premium */
     }
 
-    .coin::after{
+    .coin .coin-face::after{
       content:"";
       position:absolute;
       inset:10%;
       border-radius:50%;
       border:1px solid rgba(110,70,10,.25);
-      box-shadow: inset 0 0 10px rgba(0,0,0,.15);
-      opacity:.75;
+      box-shadow: inset 0 0 10px rgba(0,0,0,.12);
+      opacity:.8;
     }
 
     @keyframes coinFall{
-      0%   { transform: translate3d(var(--x), -20%, 0) rotate(0deg); }
-      100% { transform: translate3d(var(--x), 120%, 0) rotate(0deg); }
+      0%   { transform: translate3d(var(--drift), -20%, 0); }
+      100% { transform: translate3d(calc(var(--drift) * -1), 140%, 0); }
     }
-    @keyframes coinDrift{
-      0%   { translate: -10px 0; }
-      100% { translate:  10px 0; }
-    }
+
     @keyframes coinSpin{
-      0%   { rotate: 0deg; }
-      100% { rotate: 360deg; }
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @media (prefers-reduced-motion: reduce){
-      .coin{ animation:none; }
+      .coin, .coin .coin-face{ animation:none; }
     }
 
     /* contenido arriba */
     .card-inner{
       position:relative;
-      z-index:2;
+      z-index:3;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -370,48 +368,54 @@
       document.body.appendChild(p);
     }
 
-    // 🪙 Lluvia jackpot premium (más cantidad)
+    // 🪙 Lluvia JACKPOT PREMIUM (compatible)
     const coinsLayer = document.getElementById("coins");
-
     function rand(min, max){ return Math.random() * (max - min) + min; }
 
     if (coinsLayer) {
-      const coinsCount = 28; // JACKPOT: 22-30 recomendado
+      coinsLayer.innerHTML = "";
+      const coinsCount = 34; // MÁS lluvia tipo jackpot (28-40)
 
       for (let i = 0; i < coinsCount; i++) {
-        const c = document.createElement("div");
-        c.className = "coin";
+        const coin = document.createElement("div");
+        coin.className = "coin";
 
-        // 65% pequeñas/medianas, 35% grandes
-        const size = Math.random() < 0.65
-          ? rand(10, 20)
-          : rand(20, 38);
+        const face = document.createElement("div");
+        face.className = "coin-face";
+        coin.appendChild(face);
 
-        // blur para profundidad (algunas borrosas)
-        const blur = Math.random() < 0.28
-          ? rand(1.6, 3.8)
-          : rand(0, 0.6);
+        // tamaños
+        const size = Math.random() < 0.65 ? rand(10, 20) : rand(20, 42);
 
-        // opacidad variable
-        const alpha = Math.random() < 0.25 ? rand(0.28, 0.45) : rand(0.45, 0.85);
+        // blur (profundidad)
+        const blur = Math.random() < 0.32 ? rand(1.4, 4.2) : rand(0, 0.6);
 
-        // duración (velocidad) variable
-        const dur = rand(4.0, 10.5);
+        // opacidad
+        const alpha = Math.random() < 0.25 ? rand(0.22, 0.42) : rand(0.45, 0.88);
 
-        // delay negativo para que ya arranque “lloviendo”
+        // duraciones
+        const dur  = rand(3.6, 9.8);
+        const spin = rand(0.9, 2.3);
+
+        // delay negativo = ya cae al cargar
         const delay = -(Math.random() * dur);
 
         // posición horizontal
         const x = rand(0, 100);
 
-        c.style.setProperty("--size", `${size}px`);
-        c.style.setProperty("--blur", `${blur}px`);
-        c.style.setProperty("--alpha", `${alpha}`);
-        c.style.setProperty("--dur", `${dur}s`);
-        c.style.setProperty("--delay", `${delay}s`);
-        c.style.setProperty("--x", `${x}%`);
+        // deriva
+        const drift = rand(-22, 22);
 
-        coinsLayer.appendChild(c);
+        coin.style.setProperty("--size", `${size}px`);
+        coin.style.setProperty("--blur", `${blur}px`);
+        coin.style.setProperty("--alpha", `${alpha}`);
+        coin.style.setProperty("--dur", `${dur}s`);
+        coin.style.setProperty("--spin", `${spin}s`);
+        coin.style.setProperty("--delay", `${delay}s`);
+        coin.style.setProperty("--x", `${x}%`);
+        coin.style.setProperty("--drift", `${drift}px`);
+
+        coinsLayer.appendChild(coin);
       }
     }
 
@@ -423,8 +427,8 @@
       redirected = true;
 
       if (window.fbq) {
-        fbq('track', 'Contact');        // Evento oficial
-        fbq('trackCustom', 'WAclick');  // Custom
+        fbq('track', 'Contact');
+        fbq('trackCustom', 'WAclick');
       }
 
       setTimeout(() => {
