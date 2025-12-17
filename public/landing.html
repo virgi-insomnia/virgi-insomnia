@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Accediendo…</title>
 
-  <!-- 💎 FUENTE MEJORADA -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- 💰 META PIXEL (PIXEL DEL CLIENTE) -->
@@ -16,10 +15,7 @@
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
-    // ID del pixel del cliente
     fbq('init', '1410739130764593');
-
-    // Evento de visita a la landing
     fbq('track', 'PageView');
   </script>
 
@@ -59,7 +55,6 @@
       animation:float linear infinite, shimmer 4s ease-in-out infinite;
       box-shadow:0 0 6px rgba(177,124,255,.8);
     }
-
     @keyframes float{ from{transform:translateX(0);opacity:.25} to{transform:translateX(100vw);opacity:.9} }
     @keyframes shimmer{ 0%,100%{opacity:.2} 50%{opacity:.9} }
 
@@ -82,8 +77,10 @@
       backdrop-filter:blur(16px);
       -webkit-backdrop-filter:blur(16px);
       overflow:hidden;
+      isolation:isolate; /* clave para capas internas */
     }
 
+    /* borde/contorno */
     .card::before{
       content:"";
       position:absolute;
@@ -97,69 +94,77 @@
       -webkit-mask-composite:xor;
       mask-composite:exclude;
       opacity:.7;
+      z-index:3;
       pointer-events:none;
     }
 
-    /* ====== JACKPOT COINS (DENTRO DE LA TARJETA) ====== */
+    /* 🪙 Capa de monedas adentro de la tarjeta (detrás del contenido) */
     .coins-layer{
       position:absolute;
       inset:0;
-      border-radius:20px;
-      pointer-events:none;
-      z-index:2;          /* arriba del fondo */
       overflow:hidden;
+      border-radius:20px;
+      z-index:1;
+      pointer-events:none;
     }
 
-    .card-inner{
-      position:relative;
-      z-index:5;          /* texto, logo y botón arriba */
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+    /* “velo” para que se vea premium y no ensucie el texto */
+    .coins-layer::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(60% 55% at 50% 35%, rgba(0,0,0,.0), rgba(0,0,0,.18) 65%, rgba(0,0,0,.28) 100%);
+      z-index:2;
+      pointer-events:none;
     }
 
     .coin{
       position:absolute;
-      top:-25%;
-      left:var(--x);
-      width:var(--size);
-      height:var(--size);
-      opacity:var(--alpha);
-      filter: blur(var(--blur));
-      animation: coinFall var(--dur) linear infinite;
-    }
-
-    .coin::before{
-      content:"";
-      position:absolute;
-      inset:0;
+      top:-60px;
+      left:0;
+      width:18px;
+      height:18px;
       border-radius:50%;
+      opacity:var(--op, .8);
+      filter: blur(var(--blur, 0px)) saturate(1.15);
+      will-change: transform, opacity;
+
+      /* moneda (3 capas) */
       background:
-        radial-gradient(circle at 30% 28%, #fff, rgba(255,255,255,0) 35%),
-        conic-gradient(from 210deg,#fff2b8,#ffd36a,#caa23f,#ffd36a,#fff2b8);
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,.95), rgba(255,255,255,0) 35%),
+        radial-gradient(circle at 50% 50%, #ffe08a 0%, #f7b500 45%, #c98a00 74%, #7a4b00 100%),
+        radial-gradient(circle at 55% 55%, rgba(0,0,0,.18), rgba(0,0,0,0) 58%);
+
       box-shadow:
-        0 0 18px rgba(255,215,120,.45),
-        inset 0 0 14px rgba(255,255,255,.35),
-        inset -8px -10px 18px rgba(120,80,10,.25);
-      animation: coinSpin var(--spin) linear infinite;
+        0 0 10px rgba(255,200,60,.25),
+        0 10px 18px rgba(0,0,0,.25);
+
+      animation: coinDrop var(--dur,7s) linear var(--delay,0s) infinite;
     }
 
-    .coin::after{
-      content:"";
-      position:absolute;
-      inset:12%;
-      border-radius:50%;
-      border:1px solid rgba(120,80,20,.35);
+    /* ✅ UNA sola animación maneja caída + giro + deriva (no se pisa nada) */
+    @keyframes coinDrop{
+      0%{
+        transform: translate3d(0,-80px,0) rotate(0deg);
+        opacity:0;
+      }
+      8%{ opacity:var(--op, .8); }
+      100%{
+        transform: translate3d(var(--drift, 0px), 140%, 0) rotate(var(--rot, 540deg));
+        opacity:0.02;
+      }
     }
 
-    @keyframes coinFall{
-      from{ transform: translateY(-30%); }
-      to  { transform: translateY(160%); }
+    @media (prefers-reduced-motion: reduce){
+      .coin{ animation:none; }
     }
 
-    @keyframes coinSpin{
-      from{ transform: rotate(0deg); }
-      to  { transform: rotate(360deg); }
+    .card-inner{
+      position:relative;
+      z-index:2; /* arriba de las monedas */
+      display:flex;
+      flex-direction:column;
+      align-items:center;
     }
 
     .badge-row{
@@ -197,15 +202,14 @@
       box-shadow:0 0 8px rgba(34,197,94,1);
     }
 
+    /* ✅ LOGO SIN RESPLANDOR (evita “cuadrado”) */
     .slot-img{
       max-width:290px;
       width:78vw;
       margin:4px 0 22px;
-      /* sacamos el drop-shadow fuerte para evitar “cuadrado” raro */
       filter:none;
+      display:block;
       border-radius:28px;
-      overflow:hidden;
-      transition:all .3s ease;
     }
 
     h1{
@@ -273,20 +277,9 @@
     }
 
     @media (max-width:768px){
-      body{
-        justify-content:flex-start;
-        padding-top:24px;
-      }
-
-      .subtitle{
-        font-size:0.72rem;
-        line-height:1.1;
-        white-space:normal;
-      }
-
-      .slot-img{
-        max-width:250px;
-      }
+      body{ justify-content:flex-start; padding-top:24px; }
+      .subtitle{ font-size:0.72rem; line-height:1.1; white-space:normal; }
+      .slot-img{ max-width:250px; }
     }
   </style>
 </head>
@@ -295,8 +288,7 @@
 
   <div class="card-wrapper">
     <div class="card">
-
-      <!-- 💰 Lluvia jackpot SOLO dentro de la tarjeta -->
+      <!-- 🪙 Monedas -->
       <div class="coins-layer" id="coins" aria-hidden="true"></div>
 
       <div class="card-inner">
@@ -342,7 +334,7 @@
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    // 🌌 Partículas de fondo (afuera de la tarjeta)
+    // 🌌 Partículas de fondo (afuera)
     for (let i = 0; i < 70; i++){
       const p = document.createElement("div");
       p.classList.add("particle");
@@ -352,52 +344,57 @@
       document.body.appendChild(p);
     }
 
-    /* 💰 LLUVIA JACKPOT PREMIUM (solo dentro de la tarjeta) */
+    // 🪙 Lluvia jackpot (adentro de la card)
     const coinsLayer = document.getElementById("coins");
+    const coinsCount = 34; // más jackpot
+
+    const rand = (min, max) => Math.random() * (max - min) + min;
+
     if (coinsLayer) {
-      const COINS = 45; // subí a 70 si querés más lluvia
+      for (let i = 0; i < coinsCount; i++){
+        const c = document.createElement("div");
+        c.className = "coin";
 
-      for (let i = 0; i < COINS; i++) {
-        const coin = document.createElement("div");
-        coin.className = "coin";
+        const left = rand(-5, 105);          // que entren y salgan un poco
+        const size = rand(10, 28);           // profundidad (chicas/grandes)
+        const blur = size < 14 ? rand(0.6, 1.8) : rand(0, 0.8);
+        const op   = size < 14 ? rand(0.25, 0.55) : rand(0.55, 0.9);
 
-        const size = 10 + Math.random() * 22; // tamaños distintos
-        const blur = Math.random() < 0.35 ? "2px" : "0px"; // profundidad
-        const dur  = 6 + Math.random() * 6;
+        const dur  = rand(4.2, 8.8);         // caída
+        const delay= rand(0, 4.2);           // desfasadas
+        const drift= rand(-26, 26);          // deriva lateral
+        const rot  = rand(420, 980);         // giro total
 
-        coin.style.setProperty("--x", Math.random() * 100 + "%");
-        coin.style.setProperty("--size", size + "px");
-        coin.style.setProperty("--alpha", 0.35 + Math.random() * 0.6);
-        coin.style.setProperty("--blur", blur);
-        coin.style.setProperty("--dur", dur + "s");
-        coin.style.setProperty("--spin", (1.5 + Math.random() * 2) + "s");
+        c.style.left = left + "%";
+        c.style.width = size + "px";
+        c.style.height = size + "px";
 
-        // para que no arranquen todas juntas
-        coin.style.animationDelay = (-Math.random() * dur) + "s";
+        c.style.setProperty("--blur", blur + "px");
+        c.style.setProperty("--op", op);
+        c.style.setProperty("--dur", dur + "s");
+        c.style.setProperty("--delay", delay + "s");
+        c.style.setProperty("--drift", drift + "px");
+        c.style.setProperty("--rot", rot + "deg");
 
-        coinsLayer.appendChild(coin);
+        coinsLayer.appendChild(c);
       }
     }
 
     let redirected = false;
-
     function goToWhatsapp(){
       if (redirected) return;
       redirected = true;
 
-      // Eventos de conversión para Meta cuando el usuario toca el botón
       if (window.fbq) {
-        fbq('track', 'Contact');        // Evento oficial de WhatsApp
-        fbq('trackCustom', 'WAclick');  // Clic real al botón de WA
+        fbq('track', 'Contact');
+        fbq('trackCustom', 'WAclick');
       }
 
-      // Redirección al router / round robin
       setTimeout(() => {
         window.location.href = "/api/r";
       }, 300);
     }
 
-    // Click en el botón
     document.addEventListener("click", e => {
       if (e.target.closest("#cta-btn")) goToWhatsapp();
     });
