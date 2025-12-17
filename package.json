@@ -1,0 +1,10 @@
+{
+  "name": "redirect-whatsapp-actualizado",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Redirección dinámica con panel de administración",
+  "main": "index.js",
+  "dependencies": {
+    "@upstash/redis": "latest"
+  }
+}
