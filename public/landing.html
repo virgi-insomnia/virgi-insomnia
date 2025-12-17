@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Accediendo…</title>
 
-  <!-- 💎 FUENTE -->
+  <!-- 💎 FUENTE MEJORADA -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- 💰 META PIXEL (PIXEL DEL CLIENTE) -->
@@ -18,6 +18,8 @@
 
     // ID del pixel del cliente
     fbq('init', '1410739130764593');
+
+    // Evento de visita a la landing
     fbq('track', 'PageView');
   </script>
 
@@ -58,14 +60,8 @@
       box-shadow:0 0 6px rgba(177,124,255,.8);
     }
 
-    @keyframes float{
-      from{transform:translateX(0);opacity:.25}
-      to{transform:translateX(100vw);opacity:.9}
-    }
-    @keyframes shimmer{
-      0%,100%{opacity:.2}
-      50%{opacity:.9}
-    }
+    @keyframes float{ from{transform:translateX(0);opacity:.25} to{transform:translateX(100vw);opacity:.9} }
+    @keyframes shimmer{ 0%,100%{opacity:.2} 50%{opacity:.9} }
 
     .card-wrapper{
       z-index:2;
@@ -85,10 +81,9 @@
       box-shadow:0 0 32px rgba(0,0,0,.7);
       backdrop-filter:blur(16px);
       -webkit-backdrop-filter:blur(16px);
-      overflow:hidden; /* clave para lluvia adentro */
+      overflow:hidden;
     }
 
-    /* borde/contorno */
     .card::before{
       content:"";
       position:absolute;
@@ -102,21 +97,27 @@
       -webkit-mask-composite:xor;
       mask-composite:exclude;
       opacity:.7;
-      z-index:2;
       pointer-events:none;
     }
 
-    /* ====== COINS JACKPOT (COMPATIBLE) ====== */
+    /* ====== JACKPOT COINS (DENTRO DE LA TARJETA) ====== */
     .coins-layer{
       position:absolute;
       inset:0;
-      border-radius:inherit;
+      border-radius:20px;
       pointer-events:none;
-      z-index:0; /* atrás del contenido */
+      z-index:2;          /* arriba del fondo */
       overflow:hidden;
     }
 
-    /* contenedor: cae + deriva */
+    .card-inner{
+      position:relative;
+      z-index:5;          /* texto, logo y botón arriba */
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
     .coin{
       position:absolute;
       top:-25%;
@@ -125,59 +126,40 @@
       height:var(--size);
       opacity:var(--alpha);
       filter: blur(var(--blur));
-      will-change: transform;
-      animation: coinFall var(--dur) linear var(--delay) infinite;
+      animation: coinFall var(--dur) linear infinite;
     }
 
-    /* cara de moneda: gira */
-    .coin .coin-face{
-      width:100%;
-      height:100%;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 30% 28%, rgba(255,255,255,.95), rgba(255,255,255,0) 35%),
-        radial-gradient(circle at 70% 75%, rgba(255,255,255,.25), rgba(255,255,255,0) 45%),
-        conic-gradient(from 210deg,#fff2b8,#ffd36a,#caa23f,#ffd36a,#fff2b8);
-      box-shadow:
-        0 0 18px rgba(255,210,90,.22),
-        inset 0 0 18px rgba(255,255,255,.25),
-        inset -10px -14px 22px rgba(130,80,10,.18);
-      animation: coinSpin var(--spin) linear var(--delay) infinite;
-      position:relative;
-      mix-blend-mode: screen; /* look premium */
-    }
-
-    .coin .coin-face::after{
+    .coin::before{
       content:"";
       position:absolute;
-      inset:10%;
+      inset:0;
       border-radius:50%;
-      border:1px solid rgba(110,70,10,.25);
-      box-shadow: inset 0 0 10px rgba(0,0,0,.12);
-      opacity:.8;
+      background:
+        radial-gradient(circle at 30% 28%, #fff, rgba(255,255,255,0) 35%),
+        conic-gradient(from 210deg,#fff2b8,#ffd36a,#caa23f,#ffd36a,#fff2b8);
+      box-shadow:
+        0 0 18px rgba(255,215,120,.45),
+        inset 0 0 14px rgba(255,255,255,.35),
+        inset -8px -10px 18px rgba(120,80,10,.25);
+      animation: coinSpin var(--spin) linear infinite;
+    }
+
+    .coin::after{
+      content:"";
+      position:absolute;
+      inset:12%;
+      border-radius:50%;
+      border:1px solid rgba(120,80,20,.35);
     }
 
     @keyframes coinFall{
-      0%   { transform: translate3d(var(--drift), -20%, 0); }
-      100% { transform: translate3d(calc(var(--drift) * -1), 140%, 0); }
+      from{ transform: translateY(-30%); }
+      to  { transform: translateY(160%); }
     }
 
     @keyframes coinSpin{
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .coin, .coin .coin-face{ animation:none; }
-    }
-
-    /* contenido arriba */
-    .card-inner{
-      position:relative;
-      z-index:3;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      from{ transform: rotate(0deg); }
+      to  { transform: rotate(360deg); }
     }
 
     .badge-row{
@@ -215,14 +197,15 @@
       box-shadow:0 0 8px rgba(34,197,94,1);
     }
 
-    /* ✅ LOGO SIN RESPLANDOR */
     .slot-img{
       max-width:290px;
       width:78vw;
       margin:4px 0 22px;
+      /* sacamos el drop-shadow fuerte para evitar “cuadrado” raro */
       filter:none;
-      display:block;
       border-radius:28px;
+      overflow:hidden;
+      transition:all .3s ease;
     }
 
     h1{
@@ -312,7 +295,8 @@
 
   <div class="card-wrapper">
     <div class="card">
-      <!-- 🪙 Lluvia jackpot (solo dentro de la tarjeta) -->
+
+      <!-- 💰 Lluvia jackpot SOLO dentro de la tarjeta -->
       <div class="coins-layer" id="coins" aria-hidden="true"></div>
 
       <div class="card-inner">
@@ -358,7 +342,7 @@
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    // 🌌 Partículas de fondo (afuera de la card)
+    // 🌌 Partículas de fondo (afuera de la tarjeta)
     for (let i = 0; i < 70; i++){
       const p = document.createElement("div");
       p.classList.add("particle");
@@ -368,74 +352,52 @@
       document.body.appendChild(p);
     }
 
-    // 🪙 Lluvia JACKPOT PREMIUM (compatible)
+    /* 💰 LLUVIA JACKPOT PREMIUM (solo dentro de la tarjeta) */
     const coinsLayer = document.getElementById("coins");
-    function rand(min, max){ return Math.random() * (max - min) + min; }
-
     if (coinsLayer) {
-      coinsLayer.innerHTML = "";
-      const coinsCount = 34; // MÁS lluvia tipo jackpot (28-40)
+      const COINS = 45; // subí a 70 si querés más lluvia
 
-      for (let i = 0; i < coinsCount; i++) {
+      for (let i = 0; i < COINS; i++) {
         const coin = document.createElement("div");
         coin.className = "coin";
 
-        const face = document.createElement("div");
-        face.className = "coin-face";
-        coin.appendChild(face);
+        const size = 10 + Math.random() * 22; // tamaños distintos
+        const blur = Math.random() < 0.35 ? "2px" : "0px"; // profundidad
+        const dur  = 6 + Math.random() * 6;
 
-        // tamaños
-        const size = Math.random() < 0.65 ? rand(10, 20) : rand(20, 42);
+        coin.style.setProperty("--x", Math.random() * 100 + "%");
+        coin.style.setProperty("--size", size + "px");
+        coin.style.setProperty("--alpha", 0.35 + Math.random() * 0.6);
+        coin.style.setProperty("--blur", blur);
+        coin.style.setProperty("--dur", dur + "s");
+        coin.style.setProperty("--spin", (1.5 + Math.random() * 2) + "s");
 
-        // blur (profundidad)
-        const blur = Math.random() < 0.32 ? rand(1.4, 4.2) : rand(0, 0.6);
-
-        // opacidad
-        const alpha = Math.random() < 0.25 ? rand(0.22, 0.42) : rand(0.45, 0.88);
-
-        // duraciones
-        const dur  = rand(3.6, 9.8);
-        const spin = rand(0.9, 2.3);
-
-        // delay negativo = ya cae al cargar
-        const delay = -(Math.random() * dur);
-
-        // posición horizontal
-        const x = rand(0, 100);
-
-        // deriva
-        const drift = rand(-22, 22);
-
-        coin.style.setProperty("--size", `${size}px`);
-        coin.style.setProperty("--blur", `${blur}px`);
-        coin.style.setProperty("--alpha", `${alpha}`);
-        coin.style.setProperty("--dur", `${dur}s`);
-        coin.style.setProperty("--spin", `${spin}s`);
-        coin.style.setProperty("--delay", `${delay}s`);
-        coin.style.setProperty("--x", `${x}%`);
-        coin.style.setProperty("--drift", `${drift}px`);
+        // para que no arranquen todas juntas
+        coin.style.animationDelay = (-Math.random() * dur) + "s";
 
         coinsLayer.appendChild(coin);
       }
     }
 
-    // 🚀 Redirección WA (round robin)
     let redirected = false;
 
     function goToWhatsapp(){
       if (redirected) return;
       redirected = true;
 
+      // Eventos de conversión para Meta cuando el usuario toca el botón
       if (window.fbq) {
-        fbq('track', 'Contact');
-        fbq('trackCustom', 'WAclick');
+        fbq('track', 'Contact');        // Evento oficial de WhatsApp
+        fbq('trackCustom', 'WAclick');  // Clic real al botón de WA
       }
 
+      // Redirección al router / round robin
       setTimeout(() => {
         window.location.href = "/api/r";
       }, 300);
     }
 
+    // Click en el botón
     document.addEventListener("click", e => {
       if (e.target.closest("#cta-btn")) goToWhatsapp();
     });
