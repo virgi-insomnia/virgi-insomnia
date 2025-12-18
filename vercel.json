@@ -8,14 +8,14 @@
     {
       "src": "^/$",
       "has": [
-        { "type": "host", "value": "admin.kalixcasino.online" }
+        { "type": "host", "value": "admin.virgi-insomnia.online" }
       ],
       "dest": "/public/admin.html"
     },
     {
       "src": "^/admin$",
       "has": [
-        { "type": "host", "value": "admin.kalixcasino.online" }
+        { "type": "host", "value": "admin.virgi-insomnia.online" }
       ],
       "dest": "/public/admin.html"
     },
